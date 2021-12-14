@@ -14,3 +14,7 @@ stow -t ~ -d stow -S nvim
 
 This assumes you are calling from the root of this repo. If not, change
 the `-d` option to be the path to the stow directory.
+
+### Alacritty
+
+Move `alacritty.yml` to `%APPDATA%\alacritty\alacritty.yml`
