@@ -1,0 +1,76 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+	name = David Davenport
+	email = david.davenport88@gmail.com
+
+[includeif "gitdir:~/work/"]
+	path = ~/work/.gitconfig
+
+[core]
+	editor = nvim
+	pager = bat --style=numbers,grid
+
+[commit]
+    template = ~/.config/git/git-commit-template.txt
+
+[alias]
+	# shortcuts for frequently used commands
+	co = checkout
+	ci = commit
+	bs = status --branch --short
+    cge = config --global --edit
+
+	# listing things
+	aliases = !git config --get-regexp alias | sed -re 's/alias\\.(\\S*)\\s(.*)$/\\1 = \\2/g'
+	branches = branch --list -vv
+	stashes = stash list
+	tags = tag --list
+
+	# making life easier
+	last = log -n1
+    mywork = log --author=david.davenport@qsrsoft.com --since=midnight
+    allmywork = log --author=david.davenport@qsrsoft.com
+
+[push]
+    default = upstream
+
+[help]
+    format = man
+[man]
+    viewer = batman
+[man "batman"]
+    cmd = "batman"
+
+[pager]
+	log = bat --plain --language=gitlog
+	reflog = bat --plain --language=gitlog
+	show = bat --plain --language=gitlog
+    diff = bat --plain
+    branch = bat --style=numbers
+
+[diff]
+    tool = nvimdiff
+[difftool]
+    prompt = true
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[merge]
+    tool = nvimdiff4
+[mergetool]
+    prompt = true
+    keepBackup = false
+    keepTemporaries = false
+[mergetool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+    trustExitCode = true
+[mergetool "nvimdiff4"]
+    cmd = "nvim -d \"$BASE\" \"$MERGED\" \"$REMOTE\" \"$LOCAL\" -c 'wincmd w' -c 'wincmd J'"
+    trustExitCode = true
+[mergetool "nfugitive"]
+    cmd = "nvim -f -c \"Gdiff\" \"$MERGED\""
+    trustExitCode = true
+
+### Not sure how I feel about delta. Need to play with it more
+#[interactive]
+    #difffilter = delta --color-only --features=interactive
