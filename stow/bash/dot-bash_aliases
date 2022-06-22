@@ -6,9 +6,10 @@ export PATH="$HOME/.local/bin:$PATH"
 ### Aliases
 
 ## work aliases
-
 alias simplethink='tmux new-session -c ~/work/qsrsoft/simplethink -s simple_think'
 alias reports='tmux new-session -c ~/work/qsrsoft/reports -s reports'
+
+alias devtime='tmux new-session -c ~/dev/sw -s dev'
 
 # script aliases
 alias compare-crew='~/work/qsrsoft/simplethink/scripts/compare.sh -d --sql "ORDER BY store,name,dob,start_date,last_day,jobcode,term_code" --cut-args "-f 3-10,12-13,15-"'
@@ -22,6 +23,9 @@ alias timestamp='date +"%Y.%m.%d-%H.%M.%S"'
 alias datestamp='date +"%Y.%m.%d"'
 alias update='sudo apt update && sudo apt upgrade'
 alias refresh='source ~/.bashrc'
+
+## shortcuts
+alias c='clear'
 
 function newest() {
 	ls $1 | sort -V -r | head -n 1

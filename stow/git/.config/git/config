@@ -31,6 +31,7 @@
 	last = log -n1
     mywork = log --author=david.davenport@qsrsoft.com --since=midnight
     allmywork = log --author=david.davenport@qsrsoft.com
+	remotes = remote -v
 
 [push]
     default = upstream
@@ -55,6 +56,7 @@
     prompt = true
 [difftool "nvimdiff"]
     cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
 [merge]
     tool = nvimdiff4
 [mergetool]
@@ -74,3 +76,8 @@
 ### Not sure how I feel about delta. Need to play with it more
 #[interactive]
     #difffilter = delta --color-only --features=interactive
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
+	autosquash = true

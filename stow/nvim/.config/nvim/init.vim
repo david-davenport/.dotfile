@@ -6,7 +6,10 @@ augroup reload_vimrc " {
     autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END " }
 
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+
+augroup md_to_markdown
+    autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+augroup END
 
 " turn off relative numbers when in INSERT mode
 augroup numbertoggle "{
@@ -21,16 +24,17 @@ if executable('rg')
 endif
 
 " Create scratch buffer
-function! Scratch()
+function! s:ScratchBuffer()
     noswapfile hide enew
     setlocal buftype=nofile
     setlocal bufhidden=hide
     setlocal nobuflisted
     file scratch
 endfunction
+command! ScratchBuffer call s:ScratchBuffer()
 
 " Add char to end of line
-function! AppendToEndOfLine()
+function! s:AppendCharToEndOfLine()
     let c = getchar()
     if c =~  '^\d\+$'
         let c = nr2char(c)
@@ -38,7 +42,23 @@ function! AppendToEndOfLine()
     execute ':normal! A' . c
     "setline('.', getline('.') . c)
 endfunction
+command! AppendCharToEndOfLine call s:AppendCharToEndOfLine()
 
+" Zoom windows
+function! s:ZoomToggle() abort
+    if exists('t:zoomed') && t:zoomed
+        execute t:zoom_winrestcmd
+        let t:zoomed = 0
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+        let t:zoomed = 1
+    endif
+endfunction
+command! ZoomToggle call s:ZoomToggle()
+
+" TODO: move this to a function and turn it on only for `ft != 'dashboard'
 " highlight traling whitespace
 match ErrorMsg '\s\+$'
 
@@ -53,6 +73,9 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-dadbod'
 Plug 'tpope/vim-commentary'
 
+" Code reviews
+Plug 'pwntester/octo.nvim'
+
 " making things a little easier to work with
 Plug 'junegunn/vim-peekaboo'
 Plug 'folke/which-key.nvim'
@@ -61,10 +84,13 @@ Plug 'norcalli/nvim-colorizer.lua'
 " making things look nice
 Plug 'itchyny/lightline.vim'
 Plug 'mhinz/vim-signify'
+Plug 'folke/todo-comments.nvim'
 
 " focus for prose
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
+" Plug 'junegunn/goyo.vim'
+" Plug 'junegunn/limelight.vim'
+Plug 'folke/zen-mode.nvim'
+Plug 'folke/twilight.nvim'
 
 " colorschemes
 Plug 'dguo/blood-moon', {'rtp': 'applications/vim'}
@@ -72,18 +98,22 @@ Plug 'rktjmp/lush.nvim'
 Plug 'ellisonleao/gruvbox.nvim'
 Plug 'logico/typewriter-vim'
 
-" syntax defs
-Plug 'cheap-glitch/vim-v'
-
 " treesitter/LSP packages and other extras
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'neovim/nvim-lspconfig'
+Plug 'onsails/lspkind-nvim'
 Plug 'glepnir/lspsaga.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-neorg/neorg'
 
+" Completions
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-nvim-lua'
+Plug 'hrsh7th/cmp-nvim-lsp'
 
 call plug#end()
 
@@ -122,7 +152,6 @@ set scrolloff=10
 set signcolumn=yes
 set hidden
 set timeoutlen=500
-set clipboard^=unnamed,unnamedplus
 
 "statusline
 "set statusline=%<\ %n:%f\ \ %m%r%y%=%-35.(line:\ %l\ of\ %L\ col:\ %c%V\ (%P)%)
@@ -151,8 +180,9 @@ let mapleader = ","
 """""""""""""""""""""""""
 
 nnoremap <leader>rtw :%s/\s\+$//e<CR>
-nnoremap <silent><leader>, :call AppendToEndOfLine()<CR>
-nnoremap <leader>s :call Scratch()<CR>
+nnoremap <silent><leader>, :AppendCharToEndOfLine<CR>
+nnoremap <leader>s :ScratchBuffer<CR>
+nnoremap <leader>z :ZoomToggle<CR>
 
 " capitalize word
 noremap <leader><c-u> viwUe
@@ -173,8 +203,8 @@ vnoremap . :norm.<CR>
 " move lines
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
-inoremap <C-j> <ESC>:m .+1<CR>==
-inoremap <C-K> <ESC>:m .-2<CR>==
+" inoremap <C-j> <ESC>:m .+1<CR>==
+" inoremap <C-K> <ESC>:m .-2<CR>==
 nnoremap <leader>j :m .+1<CR>==
 nnoremap <leader>k :m .-2<CR>==
 
@@ -193,18 +223,52 @@ noremap ;' :%s:::gc<Left><Left><Left><Left>
 " Select previously pasted text
 nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
 
+" Reload vimrc
+nnoremap <leader>r :source $MYVIMRC<cr>
 
-" " Saving quicker
-"
-" " Normal mode
-"
-" nnoremap ;w :w<cr>
-"
-" " Insert mode: Ctrl-S
-"
-" inoremap <C-S> <Esc>:w<cr>i
+" Maps for Telescope
+" Using Lua functions
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>fm <cmd>lua require('telescope.builtin').marks()<cr>
+
+""" Maps for LSP functions {{{
+" NOT WORKING
+"nnoremap <silent>K :Lspsaga hover_doc<CR>
+nnoremap <silent> K <cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
+" scroll up hover doc
+nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
+" }}}
 
 lua require'colorizer'.setup()
+
+let g:mapleader="\<Space>"
+let g:dashboard_default_executive ='telescope'
+nmap <Leader>ss :<C-u>SessionSave<CR>
+nmap <Leader>sl :<C-u>SessionLoad<CR>
+nnoremap <silent> <Leader>fh :DashboardFindHistory<CR>
+nnoremap <silent> <Leader>ff :DashboardFindFile<CR>
+nnoremap <silent> <Leader>tc :DashboardChangeColorscheme<CR>
+nnoremap <silent> <Leader>fa :DashboardFindWord<CR>
+nnoremap <silent> <Leader>fb :DashboardJumpMark<CR>
+nnoremap <silent> <Leader>cn :DashboardNewFile<CR>
+
+" clipboard using win32yank.exe
+let g:clipboard = {
+            \ 'name': 'win32yank-wsl',
+            \ 'copy': {
+                \ '+': 'win32yank.exe -i --crlf',
+                \ '*': 'win32yank.exe -i --crlf',
+                \ },
+            \ 'paste': {
+                \ '+': 'win32yank.exe -o --lf',
+                \ '*': 'win32yank.exe -o --lf',
+                \ },
+                \ 'cache-enabled': 0,
+                \ }
 
 lua << EOF
 local nvim_lsp = require('lspconfig')
@@ -244,7 +308,7 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'phpactor', 'vuels', 'denols'}
+local servers = { 'vimls', 'phpactor', 'vuels', 'tsserver', 'rust_analyzer'}
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
         on_attach = on_attach,
@@ -272,20 +336,13 @@ lua << EOF
     }
     local parser_configs = require('nvim-treesitter.parsers').get_parser_configs()
 
-    parser_configs.norg = {
-        install_info = {
-            url = "https://github.com/nvim-neorg/tree-sitter-norg",
-            files = { "src/parser.c", "src/scanner.cc" },
-            branch = "main"
-        },
-    }
     require('nvim-treesitter.configs').setup {
-        ensure_installed = { "vim", "norg", "vue", "javascript", "json", "html", "css", "php" },
+        ensure_installed = { "vim", "norg", "vue", "javascript", "json", "html", "css", "php", "rust", "lua" },
+        highlight = {
+            enabled = true
+        },
         indent = {
             enable = true
         }
     }
-EOF
-lua << EOF
-    require("which-key").setup {}
 EOF

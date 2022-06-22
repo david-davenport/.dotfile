@@ -112,5 +112,14 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# source cargo
 . "$HOME/.cargo/env"
+
+# set env variables
+export PAGER="bat --plain"
+export EDITOR=nvim
+
+# Eval cargo installs after sourcing cargo env
 eval "$(fnm env)"
+eval "$(starship init bash)"
