@@ -117,58 +117,8 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 
 call plug#end()
 
-" set up color schemes
-if (has("termguicolors"))
-	set termguicolors
-endif
-
-" Basic UI tinkering
-filetype plugin indent on
-syntax enable
-
-set number
-set rnu
-set encoding=utf8
-" tabs
-set expandtab
-set shiftwidth=4
-set tabstop=4
-set autoindent
-set smartindent
-" line wrapping
-set wrap "Wrap lines
-set linebreak
-set nolist
-set textwidth=0
-set wrapmargin=0
-set showbreak=+++\
-set fo-=t
-set fo+=n
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
-
-set noerrorbells
-set scrolloff=10
-set signcolumn=yes
-set hidden
-set timeoutlen=500
-
-"statusline
-"set statusline=%<\ %n:%f\ \ %m%r%y%=%-35.(line:\ %l\ of\ %L\ col:\ %c%V\ (%P)%)
-set noshowmode
-
-set updatetime=100
-set background=dark
-let g:gruvbox_italic = 1
-let g:gruvbox_contrast_dark = 'hard'
-colorscheme gruvbox
-
-" open new split panes to right and below
-set splitright
-set splitbelow
-
-" undo/redo
-
+" Import options
+lua require('settings')
 
 " Key Maps
 

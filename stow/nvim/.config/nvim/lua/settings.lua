@@ -1,45 +1,53 @@
-local o = vim.o -- global option
-local wo = vim.wo -- window option
-local bo = vim.bo -- buffer option
+-- Basic NVim Settings
+
+if vim.fn.has('termguicolors') == 1 then
+    vim.opt.termguicolors = true
+end
+
+-- Basic UI tinkering
+vim.cmd('filetype plugin indent on')
+vim.cmd('syntax enable')
+
+-- Visual adjustments & ease-of-use
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.encoding = 'utf8'
+vim.opt.errorbells = false
+vim.opt.scrolloff = 10
+vim.opt.signcolumn = 'yes'
+vim.opt.hidden = true
+vim.opt.timeoutlen = 500
+vim.opt.showmode = false
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.updatetime = 100
+
+-- Tabs
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+vim.opt.smarttab = true
+vim.opt.autoindent = true
+vim.opt.smartindent = true
+
+-- line wrapping & folding
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.opt.list = true
+vim.opt.textwidth = 0
+vim.opt.wrapmargin = 0
+vim.opt.showbreak='+++ '
+vim.opt.formatoptions:append('n')
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
 
 
-wo.number = true
-wo.rnu = true
-o.encoding = utf8
--- tabs
-bo.expandtab = true
-bo.shiftwidth = 2
-bo.tabstop = 2
-bo.softtabstop = 2
-bo.autoindent = true
-bo.smartindent = true
--- line wrapping
-wo.wrap = true -- Wrap lines
-wo.linebreak = true
-wo.textwidth = 0
-wo.wrapmargin = 0
-wo.showbreak = +++\ 
-set fo-=t
-set fo+=n
-set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
+-- Open new split panes to right and below
+vim.opt.splitright = true
+vim.opt.splitbelow = true
 
-set nolist
-set noerrorbells
-set scrolloff=10
-set signcolumn=yes
-set hidden
-
-"statusline
-"set statusline=%<\ %n:%f\ \ %m%r%y%=%-35.(line:\ %l\ of\ %L\ col:\ %c%V\ (%P)%)
-set noshowmode
-
-set updatetime=100
-set background=dark
-let g:gruvbox_italic = 1
-let g:gruvbox_contrast_dark = 'hard'
-colorscheme gruvbox
-
-" open new split panes to right and below
-set splitright
-set splitbelow
+-- Colorscheme options
+vim.opt.background = 'dark'
+vim.g.gruvbox_italic = 1
+vim.g.gruvbox_contrast_dark = 'hard'
+vim.cmd('colorscheme gruvbox')
