@@ -1,7 +1,25 @@
-$include /etc/Inputrc
+$include /etc/inputrc
 
+# Set mode to VI and show current VI mode in prompt (insert or command mode)
 set editing-mode vi
-set show-mode-in-prompt On
-set colored-stats On
+set show-mode-in-prompt on
+
+# Color completions according to LS_COLORS
+set colored-stats on
+
+# Ignore case and treat '-' and '_' the same when matching completions
+set completion-ignore-case
+set completion-map-case on
+
+# Truncate common prefix of matching completions
 set completion-prefix-display-length 3
-set mark-symlinked-directories On
+
+# Immediately show matches on first press of <TAB> key (instead of once for the
+# "bell" and again to show completions)
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+
+# Mark directories (real or symlinked) with an appended '/'
+set mark-directories on
+set mark-symlinked-directories on
+
